@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width">
+  
+      <title>STIms</title>
+      <link rel="icon" type="image/png" href="stims-logo-png.png">
+      <link rel="stylesheet" href="styles.css" />
+
+
+    </head>
+    <body>
+
+      <img src="stims-logo-png.png" alt="stims-logo">
+
+      <h1>Welcome to STIms </h1>
+
+      <div id="qrcode" class="centerQR">
+        <canvas id="backgroundQRTemplate"></canvas>
+        <div id="qrData"></div>
+      </div>
+
+      <input type="text" id="inputBoxName">
+
+      <div class="centerButton">
+        <button type="button" id="btnGenerateQRCode">Generate QR Code</button>
+        <button type="button" id="btnDownloadQRCode">Download QR Code</button>
+      </div>
+
+      <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+      <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+      <script type="module">
+          import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";     
+          const firebaseConfig = {
+            apiKey: "AIzaSyB7M2l8RpMj3aO1Zm1FhQnT_-iI9nFTUD4",
+            authDomain: "stims-ef107.firebaseapp.com",
+            projectId: "stims-ef107",
+            storageBucket: "stims-ef107.appspot.com",
+            messagingSenderId: "722112999463",
+            appId: "1:722112999463:web:df900a1119ab1d671d1e02",
+            measurementId: "G-Q066QTP0VY"
+          };
+        
+          const app = initializeApp(firebaseConfig);
+
+          var qrGenerated = false;
+          var qrTemplateGenerated = false;
+          var qrTemplateCanvas = document.getElementById("backgroundQRTemplate");
+
+          const btnGenerateQRCode = document.getElementById("btnGenerateQRCode");
+          btnGenerateQRCode.addEventListener("click", () => {
+            const userName = document.getElementById("inputBoxName").value;
+              qrTemplateCanvas.width = 300;
+              qrTemplateCanvas.height = 450;
+
+              var qrBackgroundImage= new Image();
+              qrBackgroundImage.onload = function(){
+                templateColor.drawImage(qrBackgroundImage, 0 , 0, qrTemplateCanvas.width, qrTemplateCanvas.height);
+              
+                var stimsLogo = new Image();
+                stimsLogo.onload = function(){
+                templateColor.drawImage(stimsLogo, qrTemplateCanvas.width/6 ,-20, 200 , 145);
+                console.log("STIms Logo Drawn");
+              };
+              stimsLogo.src = "stims-logo-png.png";
+              }
+            qrBackgroundImage.src = "qrCodeBackgroundGradient.png";
+
+            var templateColor = qrTemplateCanvas.getContext("2d");
+            console.log("QR Template is generated = " + qrTemplateGenerated);
+            qrTemplateGenerated = true;
+
+            if(qrTemplateGenerated){
+              setTimeout(() => {
+                console.log("QR Template is generated = " + qrTemplateGenerated);
+
+                var qrData = document.getElementById("qrData");
+                qrData.width = 256;
+                qrData.height = 256;
+                var qr = new QRCode(qrData, {
+                  text: userName,
+                  width: 256,
+                  height: 256,
+                  colorDark: "#000000",
+                  colorLight: "#ffffff",
+                  correctLevel: QRCode.CorrectLevel.H
+                });
+                console.log('QR generated');
+
+                html2canvas(document.getElementById("qrData")).then(function(canvas) {
+                var qrImage = new Image();
+                var qrImageData = canvas.toDataURL();
+                qrImage.src = qrImageData;
+                console.log("QR Image Saved" + qrImageData);
+                    
+                  qrImage.onload = function(){
+                    console.log("QR Image Loaded");
+                    templateColor.drawImage(qrImage, qrTemplateCanvas.width/13 ,120 , 256 , 256 );
+                    templateColor.font = "30px Lobster";
+                    templateColor.textAlign = "center";
+                    templateColor.fillStyle = "#fff200";
+                    var textX = qrTemplateCanvas.width/2;
+                    var textY = qrTemplateCanvas.height/2 + 185;
+                    templateColor.fillText(userName, textX, textY);
+                    qrData.remove();
+                  };
+                  }); qrGenerated = true;
+                }, 1000);
+              };
+            btnGenerateQRCode.disabled = true;
+          });
+
+          const btnDownloadQRCode = document.getElementById("btnDownloadQRCode");
+          btnDownloadQRCode.addEventListener("click", () => {
+            if (qrGenerated) { 
+            
+                const canvas = document.getElementById('backgroundQRTemplate');
+                const canvasDataUrl = canvas.toDataURL('image/png');
+                const downloadLink = document.createElement('a');
+                downloadLink.download = `STIms_QR_Generated_${userName}.png`;
+                downloadLink.href = canvasDataUrl;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+
+                alert('QR Downloaded Complete!');
+                console.log("Download Complete");
+
+            } else {
+              alert('Please generate the QR code first!');
+            };
+          });
+
+
+
+        </script>
+    </body>
+</html>

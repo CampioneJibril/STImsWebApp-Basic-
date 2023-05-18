@@ -24,9 +24,14 @@
     color: #fff200;
   }
   
-  hide{
+  .hide{
     display: none;
   }
+
+  .show{
+    display: block;
+  }
+
   .center {
     display: flex;
     flex-direction: column;
@@ -160,8 +165,20 @@
     to {
       transform: rotate(360deg);
     }
-  
-  
-  
   }
+
+  .inputBox {
+    width: 30%;
+    padding: 5px ;
+    margin: 8px 0;
+    background-color: #051853;
+    font-size: 1.75em;
+    color: white;
+    box-sizing: border-box;
+    border: 2px solid white;
+    border-radius: 10px;
+  }
+  
+  
+
   

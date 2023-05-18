@@ -14,19 +14,20 @@
 
       <img src="stims-logo-png.png" alt="stims-logo">
 
-      <h1>Welcome to STIms </h1>
 
       <div id="qrcode" class="centerQR">
+        <h1>Welcome to STIms </h1>
+        <input type="text" id="inputBoxName" class="inputBox">
+        <button type="button" id="btnGenerateQRCode" class="centerButton">Generate QR Code</button>
+
         <canvas id="backgroundQRTemplate"></canvas>
-        <div id="qrData"></div>
+        <div id="qrData"></div> 
+        
+        <button type="button" id="btnDownloadQRCode" class="hide">Download QR Code</button>
+
       </div>
 
-      <input type="text" id="inputBoxName">
 
-      <div class="centerButton">
-        <button type="button" id="btnGenerateQRCode">Generate QR Code</button>
-        <button type="button" id="btnDownloadQRCode">Download QR Code</button>
-      </div>
 
       <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
       <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -46,11 +47,18 @@
 
           var qrGenerated = false;
           var qrTemplateGenerated = false;
+          let userName;
           var qrTemplateCanvas = document.getElementById("backgroundQRTemplate");
+          var inputBoxName = document.getElementById("inputBoxName");
 
           const btnGenerateQRCode = document.getElementById("btnGenerateQRCode");
           btnGenerateQRCode.addEventListener("click", () => {
-            const userName = document.getElementById("inputBoxName").value;
+              userName = document.getElementById("inputBoxName").value;
+
+              if(!userName){
+                alert("Please Enter Name");
+                return;
+              }
               qrTemplateCanvas.width = 300;
               qrTemplateCanvas.height = 450;
 
@@ -108,13 +116,17 @@
                   }); qrGenerated = true;
                 }, 1000);
               };
-            btnGenerateQRCode.disabled = true;
+            btnGenerateQRCode.classList.remove("centerButton");
+            btnGenerateQRCode.classList.add("hide");
+            inputBoxName.classList.add("hide");
+            btnDownloadQRCode.classList.add("show");
+
           });
 
           const btnDownloadQRCode = document.getElementById("btnDownloadQRCode");
           btnDownloadQRCode.addEventListener("click", () => {
             if (qrGenerated) { 
-            
+
                 const canvas = document.getElementById('backgroundQRTemplate');
                 const canvasDataUrl = canvas.toDataURL('image/png');
                 const downloadLink = document.createElement('a');
@@ -126,9 +138,7 @@
                 alert('QR Downloaded Complete!');
                 console.log("Download Complete");
 
-            } else {
-              alert('Please generate the QR code first!');
-            };
+            }
           });
 
 
